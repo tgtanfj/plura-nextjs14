@@ -22,25 +22,31 @@ import { getAuthUserDetails } from "@/lib/queries";
 import { SubAccount } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
+
 import React from "react";
 import DeleteButton from "./_components/delete-button";
+import CreateSubAccountButton from "./_components/create-subaccount-button";
 
 type Props = {
   params: { agencyId: string };
 };
 
-const AllSubAccountsPage = async (props: Props) => {
+const AllSubaccountsPage = async ({ params }: Props) => {
   const user = await getAuthUserDetails();
   if (!user) return;
 
   return (
     <AlertDialog>
-      <div className="flex flex-col">
-        <Button>Create</Button>
+      <div className="flex flex-col ">
+        <CreateSubAccountButton
+          user={user}
+          id={params.agencyId}
+          className="w-[200px] self-end m-6"
+        />
         <Command className="rounded-lg bg-transparent">
           <CommandInput placeholder="Search Account..." />
           <CommandList>
-            <CommandEmpty>No Results Found</CommandEmpty>
+            <CommandEmpty>No Results Found.</CommandEmpty>
             <CommandGroup heading="Sub Accounts">
               {!!user.Agency?.SubAccount.length ? (
                 user.Agency.SubAccount.map((subaccount: SubAccount) => (
@@ -61,17 +67,19 @@ const AllSubAccountsPage = async (props: Props) => {
                         />
                       </div>
                       <div className="flex flex-col justify-between">
-                        <div className="flex flex-col">{subaccount.name}</div>
-                        <span className="text-muted-foreground text-xs">
-                          {subaccount.address}
-                        </span>
+                        <div className="flex flex-col">
+                          {subaccount.name}
+                          <span className="text-muted-foreground text-xs">
+                            {subaccount.address}
+                          </span>
+                        </div>
                       </div>
                     </Link>
                     <AlertDialogTrigger asChild>
                       <Button
                         size={"sm"}
                         variant={"destructive"}
-                        className="text-red-600 w-20 hover:bg-red-600 hover:text-white"
+                        className="w-20 hover:bg-red-600 hover:text-white !text-white"
                       >
                         Delete
                       </Button>
@@ -79,10 +87,10 @@ const AllSubAccountsPage = async (props: Props) => {
                     <AlertDialogContent>
                       <AlertDialogHeader>
                         <AlertDialogTitle className="text-left">
-                          Are you absolutely sure?
+                          Are your absolutely sure
                         </AlertDialogTitle>
-                        <AlertDescription>
-                          This action cannot be undon. This will be delete the
+                        <AlertDescription className="text-left">
+                          This action cannot be undon. This will delete the
                           subaccount and all data related to the subaccount.
                         </AlertDescription>
                       </AlertDialogHeader>
@@ -99,7 +107,7 @@ const AllSubAccountsPage = async (props: Props) => {
                 ))
               ) : (
                 <div className="text-muted-foreground text-center p-4">
-                  No Sub Accounts
+                  No Sub accounts
                 </div>
               )}
             </CommandGroup>
@@ -110,4 +118,4 @@ const AllSubAccountsPage = async (props: Props) => {
   );
 };
 
-export default AllSubAccountsPage;
+export default AllSubaccountsPage;
