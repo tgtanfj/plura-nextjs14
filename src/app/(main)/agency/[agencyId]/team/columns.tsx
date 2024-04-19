@@ -179,7 +179,7 @@ const CellActions: React.FC<CellActionsProps> = ({ rowData }) => {
             onClick={() => {
               navigator.clipboard.writeText(rowData?.email);
               toast({
-                title: "Email Copied!",
+                title: "Copied To Clipboard",
               });
             }}
           >
