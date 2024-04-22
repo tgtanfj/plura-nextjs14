@@ -136,6 +136,7 @@ const TicketForm = ({ laneId, subaccountId, getNewTicket }: Props) => {
       });
 
       if (response) getNewTicket(response);
+      if (setClose) setClose();
       router.refresh();
     } catch (error) {
       toast({
@@ -177,6 +178,20 @@ const TicketForm = ({ laneId, subaccountId, getNewTicket }: Props) => {
                   <FormLabel>Description</FormLabel>
                   <FormControl>
                     <Textarea placeholder="Description" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              disabled={isLoading}
+              control={form.control}
+              name="value"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Ticket Value</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Value" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
