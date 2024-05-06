@@ -16,8 +16,13 @@ import {
 } from "@prisma/client";
 import { userAgent } from "next/server";
 import { v4 } from "uuid";
-import { CreateFunnelFormSchema, CreateMediaType } from "./types";
-import { z } from "zod";
+import {
+  CreateFunnelFormSchema,
+  CreateMediaType,
+  UpsertFunnelPage,
+} from "./types";
+import { string, z } from "zod";
+import { revalidatePath } from "next/cache";
 
 export const getAuthUserDetails = async () => {
   const user = await currentUser();
@@ -672,9 +677,9 @@ export const getTicketsWithTags = async (pipelineId: string) => {
       },
     },
     include: { Tags: true, Assigned: true, Customer: true },
-  })
-  return response
-}
+  });
+  return response;
+};
 
 export const _getTicketsWithAllRelations = async (laneId: string) => {
   const response = await db.ticket.findMany({
@@ -758,10 +763,10 @@ export const deleteTicket = async (ticketId: string) => {
     where: {
       id: ticketId,
     },
-  })
+  });
 
-  return response
-}
+  return response;
+};
 
 export const upsertTag = async (
   subaccountId: string,
@@ -771,23 +776,23 @@ export const upsertTag = async (
     where: { id: tag.id || v4(), subAccountId: subaccountId },
     update: tag,
     create: { ...tag, subAccountId: subaccountId },
-  })
+  });
 
-  return response
-}
+  return response;
+};
 
 export const deleteTag = async (tagId: string) => {
-  const response = await db.tag.delete({ where: { id: tagId } })
-  return response
-}
+  const response = await db.tag.delete({ where: { id: tagId } });
+  return response;
+};
 
 export const getTagsForSubaccount = async (subaccountId: string) => {
   const response = await db.subAccount.findUnique({
     where: { id: subaccountId },
     select: { Tags: true },
-  })
-  return response
-}
+  });
+  return response;
+};
 
 export const upsertContact = async (
   contact: Prisma.ContactUncheckedCreateInput
@@ -796,6 +801,81 @@ export const upsertContact = async (
     where: { id: contact.id || v4() },
     update: contact,
     create: contact,
-  })
-  return response
-}
+  });
+  return response;
+};
+
+export const getFunnels = async (subacountId: string) => {
+  const funnels = await db.funnel.findMany({
+    where: { subAccountId: subacountId },
+    include: { FunnelPages: true },
+  });
+
+  return funnels;
+};
+
+export const getFunnel = async (funnelId: string) => {
+  const funnel = await db.funnel.findUnique({
+    where: { id: funnelId },
+    include: {
+      FunnelPages: {
+        orderBy: {
+          order: "asc",
+        },
+      },
+    },
+  });
+
+  return funnel;
+};
+
+export const updateFunnelProducts = async (
+  products: string,
+  funnelId: string
+) => {
+  const data = await db.funnel.update({
+    where: { id: funnelId },
+    data: { liveProducts: products },
+  });
+  return data;
+};
+
+export const upsertFunnelPage = async (
+  subaccountId: string,
+  funnelPage: UpsertFunnelPage,
+  funnelId: string
+) => {
+  if (!subaccountId || !funnelId) return;
+
+  const response = await db.funnelPage.upsert({
+    where: { id: funnelPage.id || "" },
+    update: { ...funnelPage },
+    create: {
+      ...funnelPage,
+      content: funnelPage.content
+        ? funnelPage.content
+        : JSON.stringify([
+            {
+              content: [],
+              id: "__body",
+              name: "Body",
+              styles: { backgroundColor: "white" },
+              type: "__body",
+            },
+          ]),
+      funnelId,
+    },
+  });
+
+  revalidatePath(`/subaccount/${subaccountId}/funnels/${funnelId}`, "page");
+
+  return response;
+};
+
+export const deleteFunnelePage = async (funnelPageId: string) => {
+  const response = await db.funnelPage.delete({
+    where: { id: funnelPageId },
+  });
+
+  return response;
+};

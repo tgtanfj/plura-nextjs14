@@ -1,7 +1,7 @@
 "use client";
 
-import { TicketDetails } from "@/lib/types";
-import { Agency, Contact, User } from "@prisma/client";
+import { PricesList, TicketDetails } from "@/lib/types";
+import { Agency, Contact, Plan, User } from "@prisma/client";
 import { createContext, useContext, useEffect, useState } from "react";
 
 type Props = {};
@@ -14,7 +14,11 @@ export type ModalData = {
   user?: User;
   agency?: Agency;
   ticket?: TicketDetails[0];
-  contact?: Contact
+  contact?: Contact;
+  plans?: {
+    defaultPriceId: Plan;
+    plans: PricesList["data"];
+  };
 };
 
 type ModalContextType = {
@@ -70,13 +74,13 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
 };
 
 export const useModal = () => {
-  const context = useContext(ModalContext)
+  const context = useContext(ModalContext);
 
-  if(!context) {
-    throw new Error("useModal must be used within the modal provider")
+  if (!context) {
+    throw new Error("useModal must be used within the modal provider");
   }
 
-  return context
-}
+  return context;
+};
 
-export default ModalProvider
+export default ModalProvider;

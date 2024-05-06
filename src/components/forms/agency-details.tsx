@@ -124,38 +124,48 @@ const AgencyDetails = ({ data }: Props) => {
           },
         };
 
-        // todo: create new stripe user
+        const customerResponse = await fetch("/api/stripe/create-customer", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(bodyData),
+        });
+
+        const customerData: { customerId: string } =
+          await customerResponse.json();
+        custId = customerData.customerId;
       }
 
       newUserData = await initUser({ role: "AGENCY_OWNER" });
 
       // custId
-      if (!data?.id) {
-        const response = await upsertAgency({
-          id: data?.id ? data.id : v4(),
-          address: values.address,
-          agencyLogo: values.agencyLogo,
-          city: values.city,
-          companyPhone: values.companyPhone,
-          country: values.country,
-          name: values.name,
-          state: values.state,
-          whiteLabel: values.whiteLabel,
-          zipCode: values.zipCode,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          companyEmail: values.companyEmail,
-          connectAccountId: "",
-          goal: 5,
-        });
+      if (!data?.customerId && !custId) return;
+      const response = await upsertAgency({
+        id: data?.id ? data.id : v4(),
+        customerId: data?.customerId || custId || "",
+        address: values.address,
+        agencyLogo: values.agencyLogo,
+        city: values.city,
+        companyPhone: values.companyPhone,
+        country: values.country,
+        name: values.name,
+        state: values.state,
+        whiteLabel: values.whiteLabel,
+        zipCode: values.zipCode,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        companyEmail: values.companyEmail,
+        connectAccountId: "",
+        goal: 5,
+      });
 
-        toast({
-          title: "Created Agency",
-        });
-        // if (data?.id) return router.refresh();
-        // if (response) {
+      toast({
+        title: "Created Agency",
+      });
+      if (data?.id) return router.refresh();
+      if (response) {
         return router.refresh();
-        // }
       }
     } catch (error) {
       console.log(error);
@@ -170,20 +180,20 @@ const AgencyDetails = ({ data }: Props) => {
   const handleDeleteAgency = async () => {
     if (!data?.id) return;
     setDeletingAgency(true);
-    // TODO: discontinue the subscription
+    //WIP: discontinue the subscription
     try {
-      const response = await deleteAgency(data?.id);
+      const response = await deleteAgency(data.id);
       toast({
         title: "Deleted Agency",
         description: "Deleted your agency and all subaccounts",
       });
-      router.refresh;
+      router.refresh();
     } catch (error) {
-      console.log("Error: ", error);
+      console.log(error);
       toast({
         variant: "destructive",
-        title: "Oops",
-        description: "Could not delete your agency, please try again",
+        title: "Oppse!",
+        description: "could not delete your agency ",
       });
     }
     setDeletingAgency(false);
@@ -232,10 +242,7 @@ const AgencyDetails = ({ data }: Props) => {
                     <FormItem className="flex-1">
                       <FormLabel>Agency Name</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Your agency name"
-                          {...field}
-                        />
+                        <Input placeholder="Your agency name" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -248,11 +255,7 @@ const AgencyDetails = ({ data }: Props) => {
                     <FormItem className="flex-1">
                       <FormLabel>Agency Email</FormLabel>
                       <FormControl>
-                        <Input
-                          readOnly
-                          placeholder="Email"
-                          {...field}
-                        />
+                        <Input readOnly placeholder="Email" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -268,10 +271,7 @@ const AgencyDetails = ({ data }: Props) => {
                     <FormItem className="flex-1">
                       <FormLabel>Agency Phone Number</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Phone"
-                          {...field}
-                        />
+                        <Input placeholder="Phone" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -302,7 +302,7 @@ const AgencyDetails = ({ data }: Props) => {
                         />
                       </FormControl>
                     </FormItem>
-                  )
+                  );
                 }}
               />
               <FormField
@@ -313,10 +313,7 @@ const AgencyDetails = ({ data }: Props) => {
                   <FormItem className="flex-1">
                     <FormLabel>Address</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="123 st..."
-                        {...field}
-                      />
+                      <Input placeholder="123 st..." {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -331,10 +328,7 @@ const AgencyDetails = ({ data }: Props) => {
                     <FormItem className="flex-1">
                       <FormLabel>City</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="City"
-                          {...field}
-                        />
+                        <Input placeholder="City" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -348,10 +342,7 @@ const AgencyDetails = ({ data }: Props) => {
                     <FormItem className="flex-1">
                       <FormLabel>State</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="State"
-                          {...field}
-                        />
+                        <Input placeholder="State" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -365,10 +356,7 @@ const AgencyDetails = ({ data }: Props) => {
                     <FormItem className="flex-1">
                       <FormLabel>Zipcpde</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Zipcode"
-                          {...field}
-                        />
+                        <Input placeholder="Zipcode" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -383,10 +371,7 @@ const AgencyDetails = ({ data }: Props) => {
                   <FormItem className="flex-1">
                     <FormLabel>Country</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Country"
-                        {...field}
-                      />
+                      <Input placeholder="Country" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -402,14 +387,14 @@ const AgencyDetails = ({ data }: Props) => {
                   <NumberInput
                     defaultValue={data?.goal}
                     onValueChange={async (val) => {
-                      if (!data?.id) return
-                      await updateAgencyDetails(data.id, { goal: val })
+                      if (!data?.id) return;
+                      await updateAgencyDetails(data.id, { goal: val });
                       await saveActivityLogsNotification({
                         agencyId: data.id,
                         description: `Updated the agency goal to | ${val} Sub Account`,
                         subaccountId: undefined,
-                      })
-                      router.refresh()
+                      });
+                      router.refresh();
                     }}
                     min={1}
                     className="bg-background !border !border-input"
@@ -417,11 +402,8 @@ const AgencyDetails = ({ data }: Props) => {
                   />
                 </div>
               )}
-              <Button
-                type="submit"
-                disabled={isLoading}
-              >
-                {isLoading ? <Loading /> : 'Save Agency Information'}
+              <Button type="submit" disabled={isLoading}>
+                {isLoading ? <Loading /> : "Save Agency Information"}
               </Button>
             </form>
           </Form>
@@ -440,7 +422,7 @@ const AgencyDetails = ({ data }: Props) => {
                 disabled={isLoading || deletingAgency}
                 className="text-red-600 p-2 text-center mt-2 rounded-md hove:bg-red-600 hover:text-white whitespace-nowrap"
               >
-                {deletingAgency ? 'Deleting...' : 'Delete Agency'}
+                {deletingAgency ? "Deleting..." : "Delete Agency"}
               </AlertDialogTrigger>
             </div>
           )}

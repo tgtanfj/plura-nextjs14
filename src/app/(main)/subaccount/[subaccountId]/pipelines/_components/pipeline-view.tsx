@@ -53,6 +53,7 @@ const PipelineView = ({
   }, [lanes]);
 
   const ticketsFromAllLanes: TicketAndTags[] = [];
+  
   lanes.forEach((item) => {
     item.Tickets.forEach((i) => {
       ticketsFromAllLanes.push(i);
