@@ -14,7 +14,9 @@ import clsx from 'clsx'
 import React from 'react'
 import TabList from './tabs'
 import SettingsTab from './tabs/settings-tab'
-import MediaBucketTab from './tabs/components-tab/media-bucket-tab'
+import MediaBucketTab from './tabs/media-bucket-tab'
+import ComponentsTab from './tabs/components-tab'
+import { Tooltip, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 // import MediaBucketTab from './tabs/media-bucket-tab'
 // import ComponentsTab from './tabs/components-tab'
 
@@ -66,7 +68,7 @@ const FunnelEditorSidebar = ({ subaccountId }: Props) => {
             <TabsContent value="Media">
               <MediaBucketTab subaccountId={subaccountId} />
             </TabsContent>
-            {/* <TabsContent value="Components">
+            <TabsContent value="Components">
               <SheetHeader className="text-left p-6 ">
                 <SheetTitle>Components</SheetTitle>
                 <SheetDescription>
@@ -74,7 +76,7 @@ const FunnelEditorSidebar = ({ subaccountId }: Props) => {
                 </SheetDescription>
               </SheetHeader>
               <ComponentsTab />
-            </TabsContent> */}
+            </TabsContent>
           </div>
         </SheetContent>
       </Tabs>

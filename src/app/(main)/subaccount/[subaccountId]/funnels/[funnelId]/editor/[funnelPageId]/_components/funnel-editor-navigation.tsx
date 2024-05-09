@@ -187,7 +187,7 @@ const FunnelEditorNavigation = ({
               <Tooltip>
                 <TooltipTrigger>
                   <TabsTrigger
-                    value="Moblie"
+                    value="Mobile"
                     className="w-10 h-10 p-0 data-[state=active]:bg-muted"
                   >
                     <Smartphone />
