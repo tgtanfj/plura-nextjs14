@@ -77,6 +77,78 @@ const Container = ({ element }: Props) => {
         });
         break;
 
+      case "link":
+        dispatch({
+          type: "ADD_ELEMENT",
+          payload: {
+            containerId: id,
+            elementDetails: {
+              content: {
+                innerText: "Link Element",
+                href: "#",
+              },
+              id: v4(),
+              name: "Link",
+              styles: {
+                color: "black",
+                ...defaultStyles,
+              },
+              type: "link",
+            },
+          },
+        });
+        break;
+
+      case "contactForm":
+        dispatch({
+          type: "ADD_ELEMENT",
+          payload: {
+            containerId: id,
+            elementDetails: {
+              content: [],
+              id: v4(),
+              name: "Contact Form",
+              styles: {},
+              type: "contactForm",
+            },
+          },
+        });
+        break;
+
+      case "2Col":
+        dispatch({
+          type: "ADD_ELEMENT",
+          payload: {
+            containerId: id,
+            elementDetails: {
+              content: [
+                {
+                  content: [],
+                  id: v4(),
+                  name: "Container",
+                  styles: { ...defaultStyles, width: "100%" },
+                  type: "container",
+                },
+                {
+                  content: [],
+                  id: v4(),
+                  name: "Container",
+                  styles: { ...defaultStyles, width: "100%" },
+                  type: "container",
+                },
+              ],
+              id: v4(),
+              name: "Two Columns",
+              styles: {
+                display: "flex",
+                ...defaultStyles,
+              },
+              type: "2Col",
+            },
+          },
+        });
+        break;
+
       default:
         break;
     }
