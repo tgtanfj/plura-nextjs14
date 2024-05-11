@@ -115,6 +115,22 @@ const Container = ({ element }: Props) => {
         });
         break;
 
+      case "paymentForm":
+        dispatch({
+          type: "ADD_ELEMENT",
+          payload: {
+            containerId: id,
+            elementDetails: {
+              content: [],
+              id: v4(),
+              name: "Contact Form",
+              styles: {},
+              type: "paymentForm",
+            },
+          },
+        });
+        break;
+
       case "2Col":
         dispatch({
           type: "ADD_ELEMENT",
