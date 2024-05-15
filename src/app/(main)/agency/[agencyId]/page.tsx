@@ -13,7 +13,7 @@ import { db } from "@/lib/db";
 import { stripe } from "@/lib/stripe";
 import { CardCvcElement } from "@stripe/react-stripe-js";
 import { AreaChart } from "@tremor/react";
-import { Contact2, DollarSign, Goal, ShoppingCart } from "lucide-react";
+import { ClipboardIcon, Contact2, DollarSign, Goal, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
@@ -99,7 +99,7 @@ const AgencyIdPage = async (
 
   return (
     <div className="relative h-full">
-      {/* {!agencyDetails.connectAccountId && (
+      {!agencyDetails.connectAccountId && (
         <div className="absolute -top-10 -left-10 right-0 bottom-0 z-30 flex items-center justify-center backdrop-blur-md bg-background/50">
           <Card>
             <CardHeader>
@@ -117,7 +117,7 @@ const AgencyIdPage = async (
             </CardHeader>
           </Card>
         </div>
-      )} */}
+      )}
       <h1 className="text-4xl">Dashboard</h1>
       <Separator className="my-6" />
       <div className="flex flex-col gap-4 pb-6">
